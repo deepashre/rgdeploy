@@ -30,9 +30,9 @@ spec:
           args: ["start.sh"]
           env:
             - name: DB_HOST
-              value: rginstance-ml3x.c96tynwrazbs.us-east-2.docdb.amazonaws.com #Replace With DocDB Url
+              value: #Replace With DocDB Url
             - name: REDIS_HOST
-              value: 10.0.146.214 # Replace with your Instance IP
+              value: # Replace with your Instance IP
             - name: SCHEDULER_HOST
               value: scheduler-3102-svc
             - name: APP_ENV
