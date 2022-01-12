@@ -1,0 +1,104 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cc-3102-deployment
+  namespace: rlcatalyst   #Replace with your namespace
+  labels:
+    app: cc-3102
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cc-3102
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      namespace: rlcatalyst
+      labels:
+        app: cc-3102
+    spec:
+      containers:
+        - name: cc-3102
+          image: 045938549113.dkr.ecr.us-east-2.amazonaws.com/researchportal:_fd_1.8.5_b896
+          ports:
+              - name: http
+                containerPort: 3002
+                protocol: TCP
+          command: ["/bin/bash"]
+          args: ["start.sh"]
+          env:
+            - name: DB_HOST
+              value: rginstance-ml3x.c96tynwrazbs.us-east-2.docdb.amazonaws.com #Replace With DocDB Url
+            - name: REDIS_HOST
+              value: 10.0.146.214 # Replace with your Instance IP
+            - name: SCHEDULER_HOST
+              value: scheduler-3102-svc
+            - name: APP_ENV
+              value: QA           #Replace with the APP Environment
+            - name: APM_ENABLE
+              value: "false"
+            - name: APM_URL
+              value: APM URL where it has been placed
+          resources: {}
+          volumeMounts:
+            - name: persistent-storage
+              mountPath: /rlc/cc/server/app/config
+            - name: task-pv-logs
+              mountPath: /rlc/cc/server/app/logs
+      restartPolicy: Always
+      volumes:
+        - name: task-pv-logs
+          persistentVolumeClaim:
+            claimName: task-pv-claim
+        - name: persistent-storage
+          configMap:
+            name: app-configmap
+            items:
+              - key: "access-policy.json"
+                path: "access-policy.json"
+              - key: "alert-config.json"
+                path: "alert-config.json"
+              - key: "apica-config.json"
+                path: "apica-config.json"
+              - key: "app-config.js"
+                path: "app-config.js"
+              - key: "bot-context.json"
+                path: "bot-context.json"
+              - key: "bucket-policy.json"
+                path: "bucket-policy.json"
+              - key: "config.json"
+                path: "config.json"
+              - key: "dashboard-settings.json"
+                path: "dashboard-settings.json"
+              - key: "email-config.json"
+                path: "email-config.json"
+              - key: "freshService-config.json"
+                path: "freshService-config.json"
+              - key: "global-config.json"
+                path: "global-config.json"
+              - key: "mongo-config.json"
+                path: "mongo-config.json"
+              - key: "nf-core-pipeline.json"
+                path: "nf-core-pipeline.json"
+              - key: "notification-config.json"
+                path: "notification-config.json"
+              - key: "package.json"
+                path: "package.json"
+              - key: "productParameterType.json"
+                path: "productParameterType.json"
+              - key: "service-catalog-role.json"
+                path: "service-catalog-role.json"
+              - key: "settings-config.json"
+                path: "settings-config.json"
+              - key: "snsConfig.json"
+                path: "snsConfig.json"
+              - key: "trustPolicy.json"
+                path: "trustPolicy.json"
+              - key: "user.json"
+                path: "user.json"
+              - key: "workflow-config.json"
+                path: "workflow-config.json"
+              - key: "rds-combined-ca-bundle.pem"
+                path: "rds-combined-ca-bundle.pem"
