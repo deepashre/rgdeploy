@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: scheduler-3102-svc
+  namespace: rlcatalyst   #Replace with your namespace
+spec:
+  selector:
+    app: scheduler-3102
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
