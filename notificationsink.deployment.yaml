@@ -1,0 +1,92 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notificationsink-deployment
+  namespace: rlcatalyst      #Replace with your namespace
+  labels:
+    app: notificationsink
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notificationsink
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      namespace: rlcatalyst
+      labels:
+        app: notificationsink
+    spec:
+      containers:
+        - name: notificationsink
+          image: 045938549113.dkr.ecr.us-east-2.amazonaws.com/notificationsink:1.8.1_b4
+          env:
+            - name: APP_ENV
+              value: QA   #Replace with the APP Environment
+            - name: DB_HOST
+              value: #Replace With DocDB Url
+            - name: PORT
+              value: "3005"
+          resources: {}
+          volumeMounts:
+            - name: persistent-storage
+              mountPath: /opt/app/config
+            - name: task-pv-sink-logs
+              mountPath: /opt/app/notification_sink_logs
+      restartPolicy: Always
+      volumes:
+        - name: task-pv-sink-logs
+          persistentVolumeClaim:
+            claimName: task-pv-claim-3
+        - name: persistent-storage
+          configMap:
+            name: app-configmap
+            items:
+              - key: "access-policy.json"
+                path: "access-policy.json"
+              - key: "alert-config.json"
+                path: "alert-config.json"
+              - key: "apica-config.json"
+                path: "apica-config.json"
+              - key: "app-config.js"
+                path: "app-config.js"
+              - key: "bot-context.json"
+                path: "bot-context.json"
+              - key: "bucket-policy.json"
+                path: "bucket-policy.json"
+              - key: "config.json"
+                path: "config.json"
+              - key: "dashboard-settings.json"
+                path: "dashboard-settings.json"
+              - key: "email-config.json"
+                path: "email-config.json"
+              - key: "freshService-config.json"
+                path: "freshService-config.json"
+              - key: "global-config.json"
+                path: "global-config.json"
+              - key: "mongo-config.json"
+                path: "mongo-config.json"
+              - key: "nf-core-pipeline.json"
+                path: "nf-core-pipeline.json"
+              - key: "notification-config.json"
+                path: "notification-config.json"
+              - key: "package.json"
+                path: "package.json"
+              - key: "productParameterType.json"
+                path: "productParameterType.json"
+              - key: "service-catalog-role.json"
+                path: "service-catalog-role.json"
+              - key: "settings-config.json"
+                path: "settings-config.json"
+              - key: "snsConfig.json"
+                path: "snsConfig.json"
+              - key: "trustPolicy.json"
+                path: "trustPolicy.json"
+              - key: "user.json"
+                path: "user.json"
+              - key: "workflow-config.json"
+                path: "workflow-config.json"
+              - key: "rds-combined-ca-bundle.pem"
+                path: "rds-combined-ca-bundle.pem"
