@@ -38,9 +38,9 @@ spec:
             - name: CC_HOST
               value: cc-3102-svc
             - name: DB_HOST
-              value: # Replace With DocDB Url
+              value: #Replace With DocDB Url
             - name: REDIS_HOST
-              value: # Replace with your Instance IP
+              value: #Replace with your Instance IP
           resources: {}
           volumeMounts:
             - name: persistent-storage
