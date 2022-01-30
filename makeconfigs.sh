@@ -69,6 +69,7 @@ if [ ! -e "$mytemp" ]; then
 	exit 1
 fi
 cp "$mytemp"/* "$RG_HOME/config"
+cp "$RG_SRC/nginx.conf" "$RG_HOME/config/default.conf"
 s3url="https://${mys3bucket}.s3.${region}.amazonaws.com/"
 echo "Modifying config.json"
 if [ -z "$baseurl" ]; then
