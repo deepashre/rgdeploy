@@ -68,7 +68,7 @@ if [ ! -e "$mytemp" ]; then
 	echo "Error: Did not find $mytemp folder. Run this from rgdeploy folder"
 	exit 1
 fi
-
+cp "$mytemp"/* "$RG_HOME/config"
 s3url="https://${mys3bucket}.s3.${region}.amazonaws.com/"
 echo "Modifying config.json"
 if [ -z "$baseurl" ]; then
@@ -94,10 +94,9 @@ fi
 jq -r ".snsProtocol=\"$snsprotocol\"" "$mytemp/snsConfig.json" >"${RG_HOME}/config/snsConfig.json"
 echo "Modifying mongo-config.json"
 jq -r ".db_ssl_enable=true" "$mytemp/mongo-config.json" |
-	jq -r '.db_ssl_config.CAFile="RL-CA.pem"' |
-	jq -r '.db_ssl_config.PEMFile="mongodb.pem"' |
+	jq -r '.db_ssl_config.CAFile="rds-combined-ca-bundle.pem"' |
 	jq -r ".db_auth_enable=true" |
-	jq -r ".db_documentdb_enable=false" |
+	jq -r ".db_documentdb_enable=true" |
 	jq -r ".db_auth_config.username=\"$myappuser\"" |
 	jq -r ".db_auth_config.password=\"$myapppwd\"" |
 	jq -r '.db_auth_config.authenticateDb="admin"' >"${RG_HOME}/config/mongo-config.json"
@@ -121,18 +120,6 @@ jq -r ".trustPolicy.Statement[0].Principal.AWS=\"arn:aws:iam::$ac_name:role/$rol
 	jq -r ".roleName=\"RG-Portal-ProjectRole-$RG_ENV-$myrunid\"" |
 	jq -r ".policyName=\"RG-Portal-ProjectPolicy-$RG_ENV-$myrunid\"" >"${RG_HOME}/config/trustPolicy.json"
 
-echo "Copying docker-compose.yml from $RG_SRC to $RG_HOME"
-if [ -f "$RG_SRC/docker-compose.yml" ]; then
-	echo "$RG_SRC/docker-compose.yml exists"
-	# trunk-ignore(shellcheck/SC2016)
-	repcmd='s#\${PWD}#'$RG_HOME'#'
-	sed -e "$repcmd" "$RG_SRC/docker-compose.yml" \
-		-e "s/APP_ENV.*/APP_ENV=$RG_ENV/" >"$RG_HOME/docker-compose.yml"
-	echo "Modified docker-compose.yml with APP_ENV=$RG_ENV"
-else
-	echo "WARNING: Could not find docker-compose.yml file. Run this script from rgdeploy folder"
-	exit 1
-fi
 head -6 configmap.template.yaml >configmap.yaml
 cd "$RG_HOME/config" || exit 1
 myfiles=(./*)
