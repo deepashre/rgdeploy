@@ -1,7 +1,7 @@
 var mkdirp = require("mkdirp");
 var fs = require("fs");
 var currentDirectory = __dirname;
-var logger = require("../logger/logger")(module);
+var logger = require("../../logger/logger")(module);
 
 var configJson;
 try {

@@ -122,11 +122,12 @@ jq -r ".trustPolicy.Statement[0].Principal.AWS=\"arn:aws:iam::$ac_name:role/$rol
 	jq -r ".policyName=\"RG-Portal-ProjectPolicy-$RG_ENV-$myrunid\"" >"${RG_HOME}/config/trustPolicy.json"
 
 head -6 configmap.template.yaml >configmap.yaml
-cd "$RG_HOME/config" || exit 1
+cd "$RG_HOME/config" 
 myfiles=(./*)
 for myfile in "${myfiles[@]}"; do
+	# trunk-ignore(shellcheck/SC2129)
 	echo "  $(basename "$myfile"): |" >>"$RG_SRC/configmap.yaml"
-	sed -e 's/^/    /' "$myfile" >>"$RG_SRC/configmap.yaml"
+	sed -e 's/^/    /' -e '$a\' "$myfile" >>"$RG_SRC/configmap.yaml"
 done
 rm -rf "$RG_HOME"
 echo 'Configuration changed successfully'
