@@ -58,8 +58,6 @@ spec:
                 path: "bucket-policy.json"
               - key: "config.json"
                 path: "config.json"
-              - key: "dashboard-settings.json"
-                path: "dashboard-settings.json"
               - key: "email-config.json"
                 path: "email-config.json"
               - key: "freshService-config.json"
